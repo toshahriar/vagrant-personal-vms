@@ -17,6 +17,7 @@ log_vm_settings() {
   printf "%-25s : %s\n" "VM Bridge Interface" "$VM_NETWORK_BRIDGE"
   printf "%-25s : %s\n" "VM Root Password" "$VM_ROOT_PASSWORD"
   printf "%-25s : %s\n" "VM SSH Port" "$VM_SSH_PORT"
+  printf "%-25s : %s\n" "VM SSH Key Directory" "$VM_SSH_KEY_DIR"
   printf "%-25s : %s\n" "VM Package List" "$VM_PACKAGE_LIST"
   printf "%-25s : %s\n" "VM UFW Allowed Apps" "$VM_UFW_ALLOW_APPS"
   echo "-------------------------------------------------------------"
@@ -28,6 +29,7 @@ set_defaults() {
   VM_ADDITIONAL_PACKAGES=${VM_ADDITIONAL_PACKAGES:-"vim git curl telnet nano"}
   VM_UFW_ALLOWED_APPS=${VM_UFW_ALLOWED_APPS:-"ssh http https"}
   VM_SSH_PORT=${VM_SSH_PORT:-22}
+  VM_SSH_KEY_DIR=${VM_SSH_KEY_DIR:-"/vagrant/.keys"}
 }
 
 # Function to configure SSH settings
@@ -95,15 +97,20 @@ configure_ufw() {
 # Function to generate SSH keys and display the key information
 setup_ssh_keys() {
   # Generate an SSH key pair in the default directory for the current user (no passphrase)
-  ssh-keygen -t rsa -b 4096 -f "$HOME/.ssh/${VM_NAME}_id_rsa"
+  sudo mkdir -p $VM_SSH_KEY_DIR/$VM_NAME
+  ssh-keygen -t rsa -b 4096 -f "$VM_SSH_KEY_DIR/$VM_NAME/id_rsa" -N ""
 
   # Display the public key
   echo "Your SSH public key for ${VM_NAME} is:"
-  cat "$HOME/.ssh/${VM_NAME}_id_rsa.pub"
+  cat "$VM_SSH_KEY_DIR/$VM_PREFIX-$VM_INDEX/id_rsa.pub"
+
+  # Display the private key
+  echo "Your SSH private key for ${VM_NAME} is:"
+  cat "$VM_SSH_KEY_DIR/$VM_NAME/id_rsa"
 
   # Save the public key to the authorized_keys for the root user
   sudo mkdir -p /root/.ssh
-  sudo cp "$HOME/.ssh/${VM_NAME}_id_rsa.pub" /root/.ssh/authorized_keys
+  sudo cp "$VM_SSH_KEY_DIR/$VM_NAME/id_rsa.pub" /root/.ssh/authorized_keys
 
   # Set the proper permissions
   sudo chmod 700 /root/.ssh
@@ -120,8 +127,9 @@ setup_ssh_keys() {
   # Restart the SSH service to apply the changes
   sudo systemctl restart ssh
 
-  # Display the private key location
-  echo "Your SSH private key for ${VM_NAME} is saved at: $HOME/.ssh/${VM_NAME}_id_rsa"
+  # Display the public & private key location
+  echo "Your SSH public key for ${VM_NAME} is saved at: $VM_SSH_KEY_DIR/$VM_NAME/id_rsa.pub"
+  echo "Your SSH private key for ${VM_NAME} is saved at: $VM_SSH_KEY_DIR/$VM_NAME/id_rsa"
 }
 
 # Function to generate a VM-specific name

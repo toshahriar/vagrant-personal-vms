@@ -1,4 +1,5 @@
 .code
 .idea
 .keys/*
+.vagrant
 .env

@@ -1,4 +1,4 @@
-# Vagrant Personal VMs
+# Vagrant VMs
 
 ## Overview
 

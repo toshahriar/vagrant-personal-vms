@@ -31,12 +31,14 @@ This project uses Vagrant to simplify the management of virtual machines. It pro
 
    Edit `.env` to configure VM settings such as IP addresses, memory, CPUs, etc.
 
+
 3. **Install Vagrant and VirtualBox:**
 
    Ensure that you have Vagrant and VirtualBox installed on your system. You can download them from:
 
     - [Vagrant](https://www.vagrantup.com/)
     - [VirtualBox](https://www.virtualbox.org/)
+
 
 4. **Initialize and Start VMs:**
 
@@ -50,11 +52,53 @@ This project uses Vagrant to simplify the management of virtual machines. It pro
 
    The `scripts/provision.sh` script is used to set up the VMs as specified in the Vagrantfile. This script is executed during the provisioning phase.
 
-## Files and Directories
+## Commands
 
-- **`scripts/provision.sh`**: Provisioning script used for configuring the VMs. Modify this script if you need to customize the VM setup further.
-- **`.env`**: Contains sensitive environment-specific configuration details. Ensure that this file is properly secured and not shared publicly.
-- **`.env.example`**: Template for the `.env` file. Use this file to understand what variables need to be set in `.env`.
+- **Start and Provision VMs:**
+
+  ```bash
+  vagrant up
+  ```
+
+- **Reload VMs:**
+
+  Reloads the VMs, applying any configuration changes from the Vagrantfile without destroying them:
+
+  ```bash
+  vagrant reload
+  ```
+
+- **Provision VMs:**
+
+  Runs provisioning scripts on existing VMs, applying any updates or changes:
+
+  ```bash
+  vagrant provision
+  ```
+
+- **Restart and Provision VMs:**
+
+  Restarts the VMs and applies provisioning scripts:
+
+  ```bash
+  vagrant up --provision
+  ```
+
+- **Destroy VMs:**
+
+  Stops and removes the VMs, deleting all data:
+
+  ```bash
+  vagrant destroy
+  ```
+
+- **Force Destroy VMs:**
+
+  Forces the removal of VMs, bypassing any confirmation prompts:
+
+  ```bash
+  vagrant destroy --force
+  ```
 
 ## Contributing
 
